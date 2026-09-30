@@ -1,7 +1,4 @@
-/* ============================================
-   UMA Kabamba – Cadet Management System
-   Final Fixed Version (Buttons Working)
-   ============================================ */
+/* UMA Kabamba Cadet Management System - Working Version */
 
 const DEFAULT_USER = "Wasajja";
 const DEFAULT_PASS = "Ug1491";
@@ -13,7 +10,7 @@ let currentAlumniIndex = 0;
 let currentUser = DEFAULT_USER;
 let currentStudentSN = "";
 
-/* ==================== LOGIN ==================== */
+/* ========== LOGIN ========== */
 function switchLogin(type) {
   document.getElementById("tabAdmin").classList.toggle("active", type === "admin");
   document.getElementById("tabStudent").classList.toggle("active", type === "student");
@@ -84,7 +81,7 @@ function doLogout() {
   currentStudentSN = "";
 }
 
-/* ==================== CREDENTIALS ==================== */
+/* ========== CREDENTIALS ========== */
 function getCredentials() {
   try {
     const c = JSON.parse(localStorage.getItem("uma_credentials"));
@@ -123,7 +120,7 @@ function changeCredentials() {
   document.getElementById("confirmPass").value = "";
 }
 
-/* ==================== THEMES ==================== */
+/* ========== THEMES ========== */
 function setTheme(theme) {
   document.body.classList.remove("theme-dark", "theme-blue", "theme-brown");
   if (theme !== "green") {
@@ -138,7 +135,7 @@ function loadTheme() {
   if (t !== "green") document.body.classList.add("theme-" + t);
 }
 
-/* ==================== DATA HELPERS ==================== */
+/* ========== DATA HELPERS ========== */
 function getCadets() {
   try { return JSON.parse(localStorage.getItem("uma_cadets") || "[]"); }
   catch (e) { return []; }
@@ -181,7 +178,7 @@ function getUpdates() {
 }
 function saveUpdates(data) { localStorage.setItem("uma_updates", JSON.stringify(data)); }
 
-/* ==================== SAMPLE DATA ==================== */
+/* ========== SAMPLE DATA ========== */
 function loadSampleData() {
   if (getCadets().length > 0) return;
 
@@ -245,7 +242,7 @@ function initApp() {
   if (document.getElementById("exDate")) document.getElementById("exDate").value = today;
 }
 
-/* ==================== NAVIGATION ==================== */
+/* ========== NAVIGATION ========== */
 function showTab(id) {
   const tabs = document.querySelectorAll(".tab-content");
   for (let i = 0; i < tabs.length; i++) tabs[i].classList.remove("active");
@@ -275,7 +272,7 @@ function updateStats() {
   if (document.getElementById("statAlumni")) document.getElementById("statAlumni").textContent = getAlumni().length;
 }
 
-/* ==================== OFFICER ANIMATION ==================== */
+/* ========== OFFICER ANIMATION ========== */
 function startOfficerAnimation() {
   const officers = ["cmdt","ci","admin","cc","io","pc","asm","fin"];
   let delay = 0;
@@ -307,7 +304,7 @@ function enterSystem() {
   showTab("dashboard");
 }
 
-/* ==================== CADETS ==================== */
+/* ========== CADETS ========== */
 function openCategory(cat) {
   currentCategory = cat;
   currentCadetIndex = 0;
@@ -528,7 +525,7 @@ function resetCadetForm() {
   clearPhoto();
 }
 
-/* ==================== SUBJECTS ==================== */
+/* ========== SUBJECTS ========== */
 function saveSubject(e) {
   e.preventDefault();
   const name = document.getElementById("subjectName").value.trim();
@@ -603,7 +600,7 @@ function populateCadetLists() {
   if (document.getElementById("cadetList2")) document.getElementById("cadetList2").innerHTML = html;
 }
 
-/* ==================== SCORES ==================== */
+/* ========== SCORES ========== */
 function loadCadetName() {
   const sn = document.getElementById("scoreServiceNo").value.trim().toUpperCase();
   const cadets = getCadets();
@@ -676,7 +673,7 @@ function renderScores() {
   if (tbody) tbody.innerHTML = html || "<tr><td colspan='7'>No scores</td></tr>";
 }
 
-/* ==================== FIELD EXERCISES ==================== */
+/* ========== FIELD EXERCISES ========== */
 function loadCadetNameEx() {
   const sn = document.getElementById("exServiceNo").value.trim().toUpperCase();
   const cadets = getCadets();
@@ -740,7 +737,7 @@ function renderExercises() {
   if (tbody) tbody.innerHTML = html || "<tr><td colspan='6'>No exercises</td></tr>";
 }
 
-/* ==================== ALUMNI ==================== */
+/* ========== ALUMNI ========== */
 function showAlumniForm() {
   if (document.getElementById("alumniForm")) document.getElementById("alumniForm").classList.remove("hidden");
   resetAlumniForm();
@@ -866,48 +863,27 @@ function printAlumni(id) {
   const destination = prompt("Print destination (e.g. TO: CI, TO: Commandant):", "TO: Chief Instructor (CI)");
   if (destination === null) return;
 
-  let html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Alumni Record - ${a.serviceNo}</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; color: #000; }
-    h1 { color: #1a472a; margin: 0; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    td { padding: 8px; border-bottom: 1px solid #ddd; }
-  </style>
-</head>
-<body>
-  <div style="text-align:center;border-bottom:3px solid #1a472a;padding-bottom:15px;margin-bottom:20px;">
-    <h1>UGANDA MILITARY ACADEMY – KABAMBA</h1>
-    <h2>Alumni / Commissioned Officer Record</h2>
-    <p style="font-size:16px;font-weight:bold;color:#1a472a;">${destination}</p>
-    <p>Generated: ${new Date().toLocaleString()}</p>
-  </div>
-  <table>
-    <tr><td style="width:35%"><strong>Service Number</strong></td><td>${a.serviceNo}</td></tr>
-    <tr><td><strong>Full Name</strong></td><td>${a.fullName}</td></tr>
-    <tr><td><strong>Rank at Commission</strong></td><td>${a.rank}</td></tr>
-    <tr><td><strong>Date of Commission</strong></td><td>${a.commissionDate || "-"}</td></tr>
-    <tr><td><strong>Remarks</strong></td><td>${a.remarks || "-"}</td></tr>
-    <tr><td><strong>Recorded By</strong></td><td>${a.enteredBy || "-"} on ${a.enteredDate || "-"}</td></tr>
-  </table>
-  <p style="margin-top:40px;text-align:center;color:#666;font-size:12px;">— End of Alumni Record — Made by 2Lt Herbert Wasajja for UMAK only —</p>
-  <script>window.onload = function(){ window.print(); }</script>
-</body>
-</html>`;
+  let html = "<!DOCTYPE html><html><head><title>Alumni Record</title><style>body{font-family:Arial;margin:20px}h1{color:#1a472a}table{width:100%;border-collapse:collapse}td{padding:8px;border-bottom:1px solid #ddd}</style></head><body>";
+  html += "<div style='text-align:center;border-bottom:3px solid #1a472a;padding-bottom:15px;margin-bottom:20px'>";
+  html += "<h1>UGANDA MILITARY ACADEMY – KABAMBA</h1><h2>Alumni Record</h2>";
+  html += "<p style='font-size:16px;font-weight:bold;color:#1a472a'>" + destination + "</p>";
+  html += "<p>Generated: " + new Date().toLocaleString() + "</p></div>";
+  html += "<table>";
+  html += "<tr><td style='width:35%'><strong>Service Number</strong></td><td>" + a.serviceNo + "</td></tr>";
+  html += "<tr><td><strong>Full Name</strong></td><td>" + a.fullName + "</td></tr>";
+  html += "<tr><td><strong>Rank</strong></td><td>" + a.rank + "</td></tr>";
+  html += "<tr><td><strong>Date of Commission</strong></td><td>" + (a.commissionDate||"-") + "</td></tr>";
+  html += "<tr><td><strong>Remarks</strong></td><td>" + (a.remarks||"-") + "</td></tr>";
+  html += "</table>";
+  html += "<p style='margin-top:40px;text-align:center;color:#666;font-size:12px'>— Made by 2Lt Herbert Wasajja for UMAK only —</p>";
+  html += "<script>window.onload=function(){window.print();}</script></body></html>";
 
-  const printWindow = window.open("", "_blank", "width=900,height=700");
-  if (printWindow) {
-    printWindow.document.write(html);
-    printWindow.document.close();
-  } else {
-    alert("Please allow pop-ups for this site to print.");
-  }
+  const w = window.open("", "_blank", "width=900,height=700");
+  if (w) { w.document.write(html); w.document.close(); }
+  else alert("Please allow pop-ups to print.");
 }
 
-/* ==================== UPDATES ==================== */
+/* ========== UPDATES ========== */
 function saveUpdate(e) {
   e.preventDefault();
   const title = document.getElementById("updateTitle").value.trim();
@@ -991,7 +967,7 @@ function deleteUpdate(id) {
   renderAdminUpdates();
 }
 
-/* ==================== STUDENT DATA ==================== */
+/* ========== STUDENT DATA ========== */
 function loadStudentData(sn) {
   const scores = getScores().filter(function(s){return s.serviceNo === sn;});
   let html = "";
@@ -1024,7 +1000,7 @@ function loadStudentData(sn) {
   renderStudentUpdates();
 }
 
-/* ==================== SEARCH ==================== */
+/* ========== SEARCH ========== */
 function searchCadet() {
   const sn = document.getElementById("searchServiceNo").value.trim().toUpperCase();
   const cadets = getCadets();
@@ -1083,7 +1059,7 @@ function searchCadet() {
   if (result) result.innerHTML = html;
 }
 
-/* ==================== PRINT CADET (NEW WINDOW) ==================== */
+/* ========== PRINT CADET ========== */
 function printCadet(sn) {
   const destination = prompt("Print destination (e.g. TO: CI, TO: Commandant, TO: Course Coordinator):", "TO: Chief Instructor (CI)");
   if (destination === null) return;
@@ -1108,120 +1084,57 @@ function printCadet(sn) {
   const scores = getScores().filter(function(s) { return s.serviceNo === sn; });
   const exercises = getExercises().filter(function(e) { return e.serviceNo === sn; });
 
-  let html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Cadet Record - ${c.serviceNo}</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; color: #000; }
-    h1 { color: #1a472a; margin: 0; font-size: 22px; }
-    h2 { margin: 8px 0; }
-    h3 { background: #1a472a; color: white; padding: 8px; margin: 20px 0 10px 0; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-    td, th { padding: 6px 8px; border-bottom: 1px solid #ddd; text-align: left; }
-    th { background: #e8f0e8; }
-    .header { text-align: center; border-bottom: 3px solid #1a472a; padding-bottom: 15px; margin-bottom: 20px; }
-    .photo { width: 120px; height: 140px; object-fit: cover; border: 1px solid #ccc; }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <h1>UGANDA MILITARY ACADEMY – KABAMBA</h1>
-    <h2>Officer Cadet Full Record</h2>
-    <p style="font-size: 16px; font-weight: bold; color: #1a472a;">${destination}</p>
-    <p style="font-size: 13px;">Generated: ${new Date().toLocaleString()}</p>
-  </div>
+  let html = "<!DOCTYPE html><html><head><title>Cadet Record - " + c.serviceNo + "</title>";
+  html += "<style>body{font-family:Arial;margin:20px;color:#000}h1{color:#1a472a;margin:0;font-size:22px}h3{background:#1a472a;color:white;padding:8px;margin:20px 0 10px 0}";
+  html += "table{width:100%;border-collapse:collapse;margin-bottom:20px}td,th{padding:6px 8px;border-bottom:1px solid #ddd;text-align:left}th{background:#e8f0e8}";
+  html += ".header{text-align:center;border-bottom:3px solid #1a472a;padding-bottom:15px;margin-bottom:20px}.photo{width:120px;height:140px;object-fit:cover;border:1px solid #ccc}</style></head><body>";
+  html += "<div class='header'><h1>UGANDA MILITARY ACADEMY – KABAMBA</h1><h2>Officer Cadet Full Record</h2>";
+  html += "<p style='font-size:16px;font-weight:bold;color:#1a472a'>" + destination + "</p>";
+  html += "<p style='font-size:13px'>Generated: " + new Date().toLocaleString() + "</p></div>";
+  html += "<div style='display:flex;gap:20px;margin-bottom:20px'>";
+  if (c.photo) html += "<img src='" + c.photo + "' class='photo'>";
+  html += "<div><h2 style='margin:0 0 8px 0'>" + c.fullName + "</h2>";
+  html += "<p><strong>Service No:</strong> " + c.serviceNo + "</p>";
+  html += "<p><strong>Course:</strong> " + (c.courseCategory || "-") + "</p>";
+  html += "<p><strong>Year:</strong> " + (c.year || "-") + " | <strong>Rank:</strong> " + c.rank + "</p></div></div>";
 
-  <div style="display: flex; gap: 20px; margin-bottom: 20px;">
-    \( {c.photo ? `<img src=" \){c.photo}" class="photo">` : ""}
-    <div>
-      <h2 style="margin: 0 0 8px 0;">${c.fullName}</h2>
-      <p><strong>Service No:</strong> ${c.serviceNo}</p>
-      <p><strong>Course:</strong> ${c.courseCategory || "-"}</p>
-      <p><strong>Year:</strong> ${c.year || "-"} | <strong>Rank:</strong> ${c.rank}</p>
-    </div>
-  </div>
+  html += "<h3>Personal & Unit Information</h3><table>";
+  html += "<tr><td style='width:35%'><strong>Sex / Age / DOB</strong></td><td>" + c.sex + " / " + (c.age||"-") + " / " + (c.dob||"-") + "</td></tr>";
+  html += "<tr><td><strong>Education</strong></td><td>" + (c.education||"-") + "</td></tr>";
+  html += "<tr><td><strong>Next of Kin</strong></td><td>" + (c.nextOfKin||"-") + "</td></tr>";
+  html += "<tr><td><strong>Company</strong></td><td>" + (c.company||"-") + "</td></tr>";
+  html += "<tr><td><strong>Platoon / Section</strong></td><td>" + (c.platoon||"-") + " / " + (c.section||"-") + "</td></tr>";
+  html += "<tr><td><strong>Platoon Commander</strong></td><td>" + (c.pcRank||"") + " " + (c.pcName||"-") + "</td></tr></table>";
 
-  <h3>Personal & Unit Information</h3>
-  <table>
-    <tr><td style="width:35%"><strong>Sex / Age / DOB</strong></td><td>${c.sex} / ${c.age || "-"} / ${c.dob || "-"}</td></tr>
-    <tr><td><strong>Education</strong></td><td>${c.education || "-"}</td></tr>
-    <tr><td><strong>Next of Kin</strong></td><td>${c.nextOfKin || "-"}</td></tr>
-    <tr><td><strong>Company</strong></td><td>${c.company || "-"}</td></tr>
-    <tr><td><strong>Platoon / Section</strong></td><td>${c.platoon || "-"} / ${c.section || "-"}</td></tr>
-    <tr><td><strong>Platoon Commander</strong></td><td>${c.pcRank || ""} ${c.pcName || "-"}</td></tr>
-  </table>
+  html += "<h3>Audit Trail</h3><table>";
+  html += "<tr><td style='width:35%'><strong>Entered By</strong></td><td>" + (c.enteredBy||"-") + " on " + (c.enteredDate||"-") + "</td></tr>";
+  html += "<tr><td><strong>Last Accessed By</strong></td><td>" + (c.lastAccessedBy||"-") + "</td></tr>";
+  html += "<tr><td><strong>Printed By</strong></td><td>" + (c.printedBy||"-") + "</td></tr></table>";
 
-  <h3>Audit Trail</h3>
-  <table>
-    <tr><td style="width:35%"><strong>Entered By</strong></td><td>${c.enteredBy || "-"} on ${c.enteredDate || "-"}</td></tr>
-    <tr><td><strong>Last Accessed By</strong></td><td>${c.lastAccessedBy || "-"}</td></tr>
-    <tr><td><strong>Printed By</strong></td><td>${c.printedBy || "-"}</td></tr>
-  </table>
-
-  <h3>Academic Scores</h3>
-  <table>
-    <thead>
-      <tr><th>Subject</th><th>Exam Type</th><th>Score</th><th>Date</th></tr>
-    </thead>
-    <tbody>
-  `;
-
+  html += "<h3>Academic Scores</h3><table><thead><tr><th>Subject</th><th>Exam Type</th><th>Score</th><th>Date</th></tr></thead><tbody>";
   if (scores.length === 0) {
-    html += `<tr><td colspan="4">No scores recorded</td></tr>`;
+    html += "<tr><td colspan='4'>No scores recorded</td></tr>";
   } else {
     for (let i = 0; i < scores.length; i++) {
-      html += `<tr>
-        <td>${scores[i].subject}</td>
-        <td>${scores[i].examType}</td>
-        <td><strong>\( {scores[i].marks}/ \){scores[i].max}</strong></td>
-        <td>${scores[i].date || "-"}</td>
-      </tr>`;
+      html += "<tr><td>" + scores[i].subject + "</td><td>" + scores[i].examType + "</td>";
+      html += "<td><strong>" + scores[i].marks + "/" + scores[i].max + "</strong></td><td>" + (scores[i].date||"-") + "</td></tr>";
     }
   }
+  html += "</tbody></table>";
 
-  html += `
-    </tbody>
-  </table>
-
-  <h3>Field Exercises</h3>
-  <table>
-    <thead>
-      <tr><th>Exercise</th><th>Score</th><th>Date</th><th>Remarks</th></tr>
-    </thead>
-    <tbody>
-  `;
-
+  html += "<h3>Field Exercises</h3><table><thead><tr><th>Exercise</th><th>Score</th><th>Date</th><th>Remarks</th></tr></thead><tbody>";
   if (exercises.length === 0) {
-    html += `<tr><td colspan="4">No field exercises</td></tr>`;
+    html += "<tr><td colspan='4'>No field exercises</td></tr>";
   } else {
     for (let i = 0; i < exercises.length; i++) {
-      html += `<tr>
-        <td>${exercises[i].name}</td>
-        <td><strong>${exercises[i].score}</strong></td>
-        <td>${exercises[i].date || "-"}</td>
-        <td>${exercises[i].remarks || "-"}</td>
-      </tr>`;
+      html += "<tr><td>" + exercises[i].name + "</td><td><strong>" + exercises[i].score + "</strong></td>";
+      html += "<td>" + (exercises[i].date||"-") + "</td><td>" + (exercises[i].remarks||"-") + "</td></tr>";
     }
   }
+  html += "</tbody></table>";
 
-  html += `
-    </tbody>
-  </table>
-
-  <p style="margin-top: 40px; text-align: center; color: #666; font-size: 12px;">
-    — End of Record — Made by 2Lt Herbert Wasajja for UMAK only —
-  </p>
-
-  <script>
-    window.onload = function() {
-      window.print();
-    };
-  </script>
-</body>
-</html>
-  `;
+  html += "<p style='margin-top:40px;text-align:center;color:#666;font-size:12px'>— End of Record — Made by 2Lt Herbert Wasajja for UMAK only —</p>";
+  html += "<script>window.onload=function(){window.print();}</script></body></html>";
 
   const printWindow = window.open("", "_blank", "width=900,height=700");
   if (printWindow) {
@@ -1232,7 +1145,7 @@ function printCadet(sn) {
   }
 }
 
-/* ==================== EXPORT ==================== */
+/* ========== EXPORT ========== */
 function exportSingleCadet(sn) {
   const cadets = getCadets();
   let c = null;
@@ -1288,7 +1201,7 @@ function clearAllData() {
   }
 }
 
-/* ==================== UTILITIES ==================== */
+/* ========== UTILITIES ========== */
 function showAlert(id, msg, type) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -1296,9 +1209,8 @@ function showAlert(id, msg, type) {
   setTimeout(function(){ el.innerHTML = ""; }, 4000);
 }
 
-/* ==================== SAFE START ==================== */
+/* ========== START ========== */
 document.addEventListener("DOMContentLoaded", function() {
-  // Safe event listeners
   const loginPass = document.getElementById("loginPass");
   if (loginPass) {
     loginPass.addEventListener("keypress", function(e) {
