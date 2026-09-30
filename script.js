@@ -1,7 +1,6 @@
 /* ============================================
    UMA Kabamba – Cadet Management System
-   Complete JavaScript (Final Working Version)
-   Improved Print (opens new window)
+   Final Fixed Version (Buttons Working)
    ============================================ */
 
 const DEFAULT_USER = "Wasajja";
@@ -80,8 +79,8 @@ function doLogout() {
   document.getElementById("loginScreen").classList.remove("hidden");
   document.getElementById("loginPass").value = "";
   document.getElementById("stuPass").value = "";
-  document.getElementById("mainNav").style.display = "none";
-  document.getElementById("welcome").classList.add("active");
+  if (document.getElementById("mainNav")) document.getElementById("mainNav").style.display = "none";
+  if (document.getElementById("welcome")) document.getElementById("welcome").classList.add("active");
   currentStudentSN = "";
 }
 
@@ -254,13 +253,13 @@ function showTab(id) {
   const buttons = document.querySelectorAll(".nav button");
   for (let i = 0; i < buttons.length; i++) buttons[i].classList.remove("active");
 
-  document.getElementById(id).classList.add("active");
-  if (event && event.target) event.target.classList.add("active");
+  const tab = document.getElementById(id);
+  if (tab) tab.classList.add("active");
 
   if (id === "dashboard") updateStats();
   if (id === "cadets") {
-    document.getElementById("categoryView").classList.remove("hidden");
-    document.getElementById("categoryDetail").classList.add("hidden");
+    if (document.getElementById("categoryView")) document.getElementById("categoryView").classList.remove("hidden");
+    if (document.getElementById("categoryDetail")) document.getElementById("categoryDetail").classList.add("hidden");
   }
   if (id === "subjects") renderSubjects();
   if (id === "scores") { renderScores(); populateSubjectSelect(); populateCadetLists(); }
@@ -270,9 +269,9 @@ function showTab(id) {
 }
 
 function updateStats() {
-  document.getElementById("statCadets").textContent = getCadets().length;
-  document.getElementById("statSubjects").textContent = getSubjects().length;
-  document.getElementById("statExercises").textContent = getExercises().length;
+  if (document.getElementById("statCadets")) document.getElementById("statCadets").textContent = getCadets().length;
+  if (document.getElementById("statSubjects")) document.getElementById("statSubjects").textContent = getSubjects().length;
+  if (document.getElementById("statExercises")) document.getElementById("statExercises").textContent = getExercises().length;
   if (document.getElementById("statAlumni")) document.getElementById("statAlumni").textContent = getAlumni().length;
 }
 
@@ -284,21 +283,27 @@ function startOfficerAnimation() {
 
   officers.forEach(function(id, index) {
     setTimeout(function() {
-      if (index > 0) document.getElementById(officers[index-1]).classList.remove("show");
-      document.getElementById(id).classList.add("show");
+      if (index > 0) {
+        const prev = document.getElementById(officers[index-1]);
+        if (prev) prev.classList.remove("show");
+      }
+      const el = document.getElementById(id);
+      if (el) el.classList.add("show");
     }, delay);
     delay += showTime;
   });
 
   setTimeout(function() {
-    document.getElementById("fin").classList.remove("show");
-    document.getElementById("coreValues").classList.add("show");
+    const fin = document.getElementById("fin");
+    if (fin) fin.classList.remove("show");
+    const cv = document.getElementById("coreValues");
+    if (cv) cv.classList.add("show");
   }, delay + 800);
 }
 
 function enterSystem() {
-  document.getElementById("welcome").classList.remove("active");
-  document.getElementById("mainNav").style.display = "flex";
+  if (document.getElementById("welcome")) document.getElementById("welcome").classList.remove("active");
+  if (document.getElementById("mainNav")) document.getElementById("mainNav").style.display = "flex";
   showTab("dashboard");
 }
 
@@ -306,16 +311,18 @@ function enterSystem() {
 function openCategory(cat) {
   currentCategory = cat;
   currentCadetIndex = 0;
-  document.getElementById("categoryView").classList.add("hidden");
-  document.getElementById("categoryDetail").classList.remove("hidden");
-  document.getElementById("categoryTitle").textContent = cat === "Professional" ? "Professionals (Short Cadet Course)" : "Year " + cat + " Cadets";
+  if (document.getElementById("categoryView")) document.getElementById("categoryView").classList.add("hidden");
+  if (document.getElementById("categoryDetail")) document.getElementById("categoryDetail").classList.remove("hidden");
+  if (document.getElementById("categoryTitle")) {
+    document.getElementById("categoryTitle").textContent = cat === "Professional" ? "Professionals (Short Cadet Course)" : "Year " + cat + " Cadets";
+  }
   hideAddForm();
   renderCategoryCadets();
 }
 
 function backToCategories() {
-  document.getElementById("categoryDetail").classList.add("hidden");
-  document.getElementById("categoryView").classList.remove("hidden");
+  if (document.getElementById("categoryDetail")) document.getElementById("categoryDetail").classList.add("hidden");
+  if (document.getElementById("categoryView")) document.getElementById("categoryView").classList.remove("hidden");
 }
 
 function getCategoryCadets() {
@@ -343,18 +350,19 @@ function renderCategoryCadets() {
     html += "<button class='btn btn-success' onclick=\"printCadet('" + c.serviceNo + "')\">Print</button>";
     html += "</td></tr>";
   }
-  document.getElementById("cadetTableBody").innerHTML = html || "<tr><td colspan='6'>No cadets in this category yet</td></tr>";
+  const tbody = document.getElementById("cadetTableBody");
+  if (tbody) tbody.innerHTML = html || "<tr><td colspan='6'>No cadets in this category yet</td></tr>";
 }
 
 function showAddForm() {
-  document.getElementById("cadetForm").classList.remove("hidden");
-  document.getElementById("cadetListArea").classList.add("hidden");
+  if (document.getElementById("cadetForm")) document.getElementById("cadetForm").classList.remove("hidden");
+  if (document.getElementById("cadetListArea")) document.getElementById("cadetListArea").classList.add("hidden");
   resetCadetForm();
 }
 
 function hideAddForm() {
-  document.getElementById("cadetForm").classList.add("hidden");
-  document.getElementById("cadetListArea").classList.remove("hidden");
+  if (document.getElementById("cadetForm")) document.getElementById("cadetForm").classList.add("hidden");
+  if (document.getElementById("cadetListArea")) document.getElementById("cadetListArea").classList.remove("hidden");
   resetCadetForm();
 }
 
@@ -375,10 +383,11 @@ function nextCadet() {
 }
 
 function loadCadetToForm(c) {
-  document.getElementById("cadetId").value = c.id;
-  document.getElementById("serviceNo").value = c.serviceNo;
-  document.getElementById("fullName").value = c.fullName;
-  document.getElementById("sex").value = c.sex;
+  if (!c) return;
+  document.getElementById("cadetId").value = c.id || "";
+  document.getElementById("serviceNo").value = c.serviceNo || "";
+  document.getElementById("fullName").value = c.fullName || "";
+  document.getElementById("sex").value = c.sex || "";
   document.getElementById("dob").value = c.dob || "";
   document.getElementById("age").value = c.age || "";
   document.getElementById("education").value = c.education || "";
@@ -415,9 +424,11 @@ function previewPhoto(e) {
 
 function clearPhoto() {
   currentPhoto = "";
-  document.getElementById("photoPreview").src = "";
-  document.getElementById("photoPreview").style.display = "none";
-  document.getElementById("photoPlaceholder").style.display = "block";
+  if (document.getElementById("photoPreview")) {
+    document.getElementById("photoPreview").src = "";
+    document.getElementById("photoPreview").style.display = "none";
+  }
+  if (document.getElementById("photoPlaceholder")) document.getElementById("photoPlaceholder").style.display = "block";
   if (document.getElementById("photoInput")) document.getElementById("photoInput").value = "";
 }
 
@@ -510,10 +521,10 @@ function deleteCadet(id) {
 }
 
 function resetCadetForm() {
-  document.getElementById("cadetForm").reset();
-  document.getElementById("cadetId").value = "";
-  document.getElementById("rank").value = "O/Cdt";
-  document.getElementById("cadetSaveBtn").textContent = "Save Cadet";
+  if (document.getElementById("cadetForm")) document.getElementById("cadetForm").reset();
+  if (document.getElementById("cadetId")) document.getElementById("cadetId").value = "";
+  if (document.getElementById("rank")) document.getElementById("rank").value = "O/Cdt";
+  if (document.getElementById("cadetSaveBtn")) document.getElementById("cadetSaveBtn").textContent = "Save Cadet";
   clearPhoto();
 }
 
@@ -557,9 +568,9 @@ function deleteSubject(i) {
 }
 
 function resetSubjectForm() {
-  document.getElementById("subjectForm").reset();
-  document.getElementById("subjectId").value = "";
-  document.getElementById("subjectSaveBtn").textContent = "Add Subject";
+  if (document.getElementById("subjectForm")) document.getElementById("subjectForm").reset();
+  if (document.getElementById("subjectId")) document.getElementById("subjectId").value = "";
+  if (document.getElementById("subjectSaveBtn")) document.getElementById("subjectSaveBtn").textContent = "Add Subject";
 }
 
 function renderSubjects() {
@@ -570,14 +581,16 @@ function renderSubjects() {
     html += "<td><button class='btn btn-primary' onclick='editSubject("+i+")'>Edit</button> ";
     html += "<button class='btn btn-danger' onclick='deleteSubject("+i+")'>Delete</button></td></tr>";
   }
-  document.getElementById("subjectTableBody").innerHTML = html || "<tr><td colspan='3'>No subjects</td></tr>";
+  const tbody = document.getElementById("subjectTableBody");
+  if (tbody) tbody.innerHTML = html || "<tr><td colspan='3'>No subjects</td></tr>";
 }
 
 function populateSubjectSelect() {
   const subjects = getSubjects();
   let html = "";
   for (let i = 0; i < subjects.length; i++) html += "<option>" + subjects[i] + "</option>";
-  document.getElementById("scoreSubject").innerHTML = html;
+  const sel = document.getElementById("scoreSubject");
+  if (sel) sel.innerHTML = html;
 }
 
 function populateCadetLists() {
@@ -586,8 +599,8 @@ function populateCadetLists() {
   for (let i = 0; i < cadets.length; i++) {
     html += "<option value='" + cadets[i].serviceNo + "'>" + cadets[i].fullName + "</option>";
   }
-  document.getElementById("cadetList").innerHTML = html;
-  document.getElementById("cadetList2").innerHTML = html;
+  if (document.getElementById("cadetList")) document.getElementById("cadetList").innerHTML = html;
+  if (document.getElementById("cadetList2")) document.getElementById("cadetList2").innerHTML = html;
 }
 
 /* ==================== SCORES ==================== */
@@ -659,7 +672,8 @@ function renderScores() {
     html += "<td>" + (s.date||"-") + "</td>";
     html += "<td><button class='btn btn-danger' onclick=\"deleteScore('" + s.id + "')\">Delete</button></td></tr>";
   }
-  document.getElementById("scoreTableBody").innerHTML = html || "<tr><td colspan='7'>No scores</td></tr>";
+  const tbody = document.getElementById("scoreTableBody");
+  if (tbody) tbody.innerHTML = html || "<tr><td colspan='7'>No scores</td></tr>";
 }
 
 /* ==================== FIELD EXERCISES ==================== */
@@ -722,24 +736,25 @@ function renderExercises() {
     html += "<td>" + (e.date||"-") + "</td>";
     html += "<td><button class='btn btn-danger' onclick=\"deleteExercise('" + e.id + "')\">Delete</button></td></tr>";
   }
-  document.getElementById("exerciseTableBody").innerHTML = html || "<tr><td colspan='6'>No exercises</td></tr>";
+  const tbody = document.getElementById("exerciseTableBody");
+  if (tbody) tbody.innerHTML = html || "<tr><td colspan='6'>No exercises</td></tr>";
 }
 
 /* ==================== ALUMNI ==================== */
 function showAlumniForm() {
-  document.getElementById("alumniForm").classList.remove("hidden");
+  if (document.getElementById("alumniForm")) document.getElementById("alumniForm").classList.remove("hidden");
   resetAlumniForm();
 }
 
 function hideAlumniForm() {
-  document.getElementById("alumniForm").classList.add("hidden");
+  if (document.getElementById("alumniForm")) document.getElementById("alumniForm").classList.add("hidden");
   resetAlumniForm();
 }
 
 function resetAlumniForm() {
-  document.getElementById("alumniForm").reset();
-  document.getElementById("alumniId").value = "";
-  document.getElementById("alumniSaveBtn").textContent = "Save Alumni";
+  if (document.getElementById("alumniForm")) document.getElementById("alumniForm").reset();
+  if (document.getElementById("alumniId")) document.getElementById("alumniId").value = "";
+  if (document.getElementById("alumniSaveBtn")) document.getElementById("alumniSaveBtn").textContent = "Save Alumni";
 }
 
 function saveAlumni(e) {
@@ -836,7 +851,8 @@ function renderAlumni() {
     html += "<button class='btn btn-success' onclick=\"printAlumni('" + a.id + "')\">Print</button>";
     html += "</td></tr>";
   }
-  document.getElementById("alumniTableBody").innerHTML = html || "<tr><td colspan='5'>No Alumni records yet</td></tr>";
+  const tbody = document.getElementById("alumniTableBody");
+  if (tbody) tbody.innerHTML = html || "<tr><td colspan='5'>No Alumni records yet</td></tr>";
 }
 
 function printAlumni(id) {
@@ -883,11 +899,15 @@ function printAlumni(id) {
 </html>`;
 
   const printWindow = window.open("", "_blank", "width=900,height=700");
-  printWindow.document.write(html);
-  printWindow.document.close();
+  if (printWindow) {
+    printWindow.document.write(html);
+    printWindow.document.close();
+  } else {
+    alert("Please allow pop-ups for this site to print.");
+  }
 }
 
-/* ==================== UPDATES (Text + Photo) ==================== */
+/* ==================== UPDATES ==================== */
 function saveUpdate(e) {
   e.preventDefault();
   const title = document.getElementById("updateTitle").value.trim();
@@ -895,7 +915,7 @@ function saveUpdate(e) {
   if (!title || !message) return;
 
   const fileInput = document.getElementById("updatePhoto");
-  const file = fileInput.files[0];
+  const file = fileInput ? fileInput.files[0] : null;
 
   if (file) {
     const reader = new FileReader();
@@ -919,9 +939,9 @@ function finishSaveUpdate(title, message, photo) {
     by: currentUser
   });
   saveUpdates(updates);
-  document.getElementById("updateTitle").value = "";
-  document.getElementById("updateMessage").value = "";
-  document.getElementById("updatePhoto").value = "";
+  if (document.getElementById("updateTitle")) document.getElementById("updateTitle").value = "";
+  if (document.getElementById("updateMessage")) document.getElementById("updateMessage").value = "";
+  if (document.getElementById("updatePhoto")) document.getElementById("updatePhoto").value = "";
   showAlert("updateAlert", "Update posted successfully!", "success");
   renderAdminUpdates();
 }
@@ -942,7 +962,8 @@ function renderAdminUpdates() {
       html += "</div>";
     }
   }
-  document.getElementById("adminUpdatesList").innerHTML = html;
+  const el = document.getElementById("adminUpdatesList");
+  if (el) el.innerHTML = html;
 }
 
 function renderStudentUpdates() {
@@ -960,7 +981,8 @@ function renderStudentUpdates() {
       html += "</div>";
     }
   }
-  document.getElementById("studentUpdatesList").innerHTML = html;
+  const el = document.getElementById("studentUpdatesList");
+  if (el) el.innerHTML = html;
 }
 
 function deleteUpdate(id) {
@@ -984,7 +1006,7 @@ function loadStudentData(sn) {
     }
     html += "</tbody></table>";
   }
-  document.getElementById("studentScores").innerHTML = html;
+  if (document.getElementById("studentScores")) document.getElementById("studentScores").innerHTML = html;
 
   const exercises = getExercises().filter(function(e){return e.serviceNo === sn;});
   html = "";
@@ -998,7 +1020,7 @@ function loadStudentData(sn) {
     }
     html += "</tbody></table>";
   }
-  document.getElementById("studentExercises").innerHTML = html;
+  if (document.getElementById("studentExercises")) document.getElementById("studentExercises").innerHTML = html;
   renderStudentUpdates();
 }
 
@@ -1012,7 +1034,7 @@ function searchCadet() {
   }
   const result = document.getElementById("searchResult");
   if (!c) {
-    result.innerHTML = "<div class='alert alert-error'>No cadet found with that Service Number.</div>";
+    if (result) result.innerHTML = "<div class='alert alert-error'>No cadet found with that Service Number.</div>";
     return;
   }
   c.lastAccessedBy = currentUser;
@@ -1058,10 +1080,10 @@ function searchCadet() {
   html += "</tbody></table>";
   html += "<br><button class='btn btn-success' onclick=\"printCadet('" + sn + "')\">Print Full Record</button> ";
   html += "<button class='btn btn-primary' onclick=\"exportSingleCadet('" + sn + "')\">Export this Cadet to Excel</button></div>";
-  result.innerHTML = html;
+  if (result) result.innerHTML = html;
 }
 
-/* ==================== PRINT CADET (IMPROVED - OPENS NEW WINDOW) ==================== */
+/* ==================== PRINT CADET (NEW WINDOW) ==================== */
 function printCadet(sn) {
   const destination = prompt("Print destination (e.g. TO: CI, TO: Commandant, TO: Course Coordinator):", "TO: Chief Instructor (CI)");
   if (destination === null) return;
@@ -1079,7 +1101,6 @@ function printCadet(sn) {
     return;
   }
 
-  // Update audit
   c.printedBy = currentUser + " on " + new Date().toLocaleString();
   c.lastAccessedBy = currentUser;
   saveCadets(cadets);
@@ -1202,7 +1223,6 @@ function printCadet(sn) {
 </html>
   `;
 
-  // Open new window (more reliable)
   const printWindow = window.open("", "_blank", "width=900,height=700");
   if (printWindow) {
     printWindow.document.write(html);
@@ -1276,13 +1296,22 @@ function showAlert(id, msg, type) {
   setTimeout(function(){ el.innerHTML = ""; }, 4000);
 }
 
-/* ==================== EVENT LISTENERS ==================== */
-document.getElementById("loginPass").onkeypress = function(e) {
-  if (e.key === "Enter" || e.keyCode === 13) doAdminLogin();
-};
-document.getElementById("stuPass").onkeypress = function(e) {
-  if (e.key === "Enter" || e.keyCode === 13) doStudentLogin();
-};
+/* ==================== SAFE START ==================== */
+document.addEventListener("DOMContentLoaded", function() {
+  // Safe event listeners
+  const loginPass = document.getElementById("loginPass");
+  if (loginPass) {
+    loginPass.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") doAdminLogin();
+    });
+  }
 
-// Load theme on page load
-loadTheme();
+  const stuPass = document.getElementById("stuPass");
+  if (stuPass) {
+    stuPass.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") doStudentLogin();
+    });
+  }
+
+  loadTheme();
+});
